@@ -80,7 +80,7 @@ public class Audroid {
      * file actually existed in the first place
      * @return Whether this file existed in the file system
      */
-    public static boolean deleteRecording() {
+    public boolean deleteRecording() {
         throw new RuntimeException("Not yet implemented!");
     }
 
