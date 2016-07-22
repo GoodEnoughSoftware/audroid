@@ -10,7 +10,7 @@ import java.io.File;
  * A class that provides methods for recording and playing audio on Android.
  * Last modified July 21, 2016
  * @author Aaron Vontell
- * @version 0.1
+ * @version 0.1.1
  */
 public class Audroid {
 
@@ -67,7 +67,25 @@ public class Audroid {
     }
 
     /**
-     * Returns the File that holds the Audio information (if audio has yet been recorder)
+     * Returns true if the given file to save to already exists
+     * @return Whether this file is already being used (and as such would be overridden by
+     *         a recording)
+     */
+    public boolean fileExists() {
+        throw new RuntimeException("Not yet implemented!");
+    }
+
+    /**
+     * Deletes the file at the audioLocation given at Audroid creation, and returns true if this
+     * file actually existed in the first place
+     * @return Whether this file existed in the file system
+     */
+    public static boolean deleteRecording() {
+        throw new RuntimeException("Not yet implemented!");
+    }
+
+    /**
+     * Returns the File that holds the audio information (if audio has yet been recorder)
      * @return the audio file
      */
     public File getSavedFile() {
