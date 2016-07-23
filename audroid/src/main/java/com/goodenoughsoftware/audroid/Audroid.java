@@ -7,7 +7,8 @@ import android.support.annotation.RequiresPermission;
 import java.io.File;
 
 /**
- * A class that provides methods for recording and playing audio on Android.
+ * A class that provides methods for recording and playing audio on Android. Note that the user
+ * of this class is responsible for remembering where audio files were saved
  * Last modified July 21, 2016
  * @author Aaron Vontell
  * @version 0.1.1
@@ -16,6 +17,7 @@ public class Audroid {
 
     private File audioFile;
     private AudroidSource sourceDevice;
+    private boolean recording = false;
 
     /**
      * Creates an object that will handle the recording and playback of audio to and from a given
@@ -30,7 +32,10 @@ public class Audroid {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO})
     public Audroid(@NonNull File audioLocation, @NonNull AudroidSource source) {
-        throw new RuntimeException("Not yet implemented!");
+
+        this.audioFile = audioLocation;
+        this.sourceDevice = source;
+
     }
 
     /**
@@ -39,6 +44,8 @@ public class Audroid {
      * *Note: this will overwrite any content at the given audioLocation
      */
     public void startRecording() {
+
+        recording = true;
         throw new RuntimeException("Not yet implemented!");
     }
 
@@ -46,6 +53,17 @@ public class Audroid {
      * Pause the recording
      */
     public void pauseRecording() {
+
+        recording = false;
+        throw new RuntimeException("Not yet implemented!");
+    }
+
+    /**
+     * Continue the recording
+     */
+    public void unpauseRecording() {
+
+        recording = true;
         throw new RuntimeException("Not yet implemented!");
     }
 
@@ -53,6 +71,8 @@ public class Audroid {
      * Stops the recording, ensuring that the audio file is saved and is a valid mp3 file
      */
     public void stopRecording() {
+
+        recording = false;
         throw new RuntimeException("Not yet implemented!");
     }
 
@@ -63,7 +83,30 @@ public class Audroid {
      * @param newLocation The new location of the audio file
      */
     public void setLocation(@NonNull File newLocation) {
-        throw new RuntimeException("Not yet implemented!");
+
+        // Check to see if the recording is in process
+        if(!recording) {
+
+            // If not, change the file location
+            if(fileExists()) {
+
+                // If the file already exists, copy and paste it into the new location
+
+            } else {
+
+                // If the recording was never made, reset the location
+                this.audioFile = newLocation;
+
+            }
+            throw new RuntimeException("Not yet implemented!");
+
+        } else {
+
+            // If so, tell the user they cannot do that!
+            throw new RuntimeException("File location cannot change while recording");
+
+        }
+
     }
 
     /**
@@ -71,7 +114,7 @@ public class Audroid {
      * @return Whether this file is already being used (and as such would be overridden by
      *         a recording)
      */
-    public boolean fileExists() {
+    private boolean fileExists() {
         throw new RuntimeException("Not yet implemented!");
     }
 
