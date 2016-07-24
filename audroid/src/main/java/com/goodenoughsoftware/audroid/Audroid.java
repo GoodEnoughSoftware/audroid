@@ -10,6 +10,7 @@ import android.support.annotation.RequiresPermission;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -31,26 +32,43 @@ public class Audroid extends Service {
     private MediaRecorder audioRecorder;
     private int randomInt;
     private String privateFilePath;
+    private Date dateCreated;
 
     /**
      * Creates an object that will handle the recording and playback of audio to and from a given
      * file. Recording will be done through the given source.
-     * * Note: this file requires permissions for reading storage, writing to storage, and
-     * recording audio.
+     * * Note: this file requires the recording audio permission.
      * @param source The device that will listen to audio for recording
      */
     @RequiresPermission(allOf = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO})
     public Audroid(@NonNull AudroidSource source) {
 
         this.sourceDevice = source;
+        this.dateCreated = new Date();
 
         while(this.privateFilePath == null || fileExists()) {
             this.randomInt = new Random().nextInt();
             this.privateFilePath = getFilesDir().getAbsolutePath() + "/" + randomInt + ".mp3";
         }
+
+    }
+
+    /**
+     * Creates an Audroid object from an existing file that contains MP3 content, with any new
+     * recording being done through the given source.
+     * * Note: this file requires the recording audio permission.
+     * @param source THe device that will listen to audio for recording
+     * @param existingFile The existing file that contains mp3 content
+     */
+    @RequiresPermission(allOf = {
+            Manifest.permission.RECORD_AUDIO})
+    public Audroid(@NonNull AudroidSource source, File existingFile) {
+
+        this.sourceDevice = source;
+
+        this.randomInt = -1;
+        this.privateFilePath = existingFile.getAbsolutePath();
 
     }
 
@@ -73,7 +91,6 @@ public class Audroid extends Service {
             audioRecorder.setAudioSource(sourceDevice.getAndroidSource());
             audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
-            // TODO; Check the temp file doesnt already exists
             audioRecorder.setOutputFile(privateFilePath);
             audioRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             audioRecorder.prepare();
@@ -119,39 +136,6 @@ public class Audroid extends Service {
     }
 
     /**
-     * Changes the location to save the file to newLocation
-     * * Note: This method cannot be called once startRecording() has been called and before
-     * stopRecording() has been called, and will throw a RuntimeException if attempted
-     * @param newLocation The new location of the audio file
-     */
-    public void setLocation(@NonNull File newLocation) {
-
-        // Check to see if the recording is in process
-        if(!recording) {
-
-            // If not, change the file location
-            if(fileExists()) {
-
-                // If the file already exists, copy and paste it into the new location
-
-            } else {
-
-                // If the recording was never made, reset the location
-                // this.audioFile = newLocation;
-
-            }
-            throw new RuntimeException("Not yet implemented!");
-
-        } else {
-
-            // If so, tell the user they cannot do that!
-            throw new RuntimeException("File location cannot change while recording");
-
-        }
-
-    }
-
-    /**
      * Returns true if the given file to save to already exists
      * @return Whether this file is already being used (and as such would be overridden by
      *         a recording)
@@ -187,6 +171,27 @@ public class Audroid extends Service {
     }
 
     /**
+     * Changes the file name to the given name
+     * * Note: This method cannot be called once startRecording() has been called and before
+     * stopRecording() has been called, and will throw a RuntimeException if attempted
+     * @param name The file name, without the extension or directory path to it.
+     * @return Whether the name change operation succeeded
+     */
+    public boolean changeFileName(String name) {
+
+        if(!recording) {
+            File existingFile = new File(privateFilePath);
+            String newPath = getFilesDir().getAbsolutePath() + "/" + name + ".mp3";
+            boolean success = existingFile.renameTo(new File(newPath));
+            this.privateFilePath = newPath;
+            return success;
+        } else {
+            throw new RuntimeException("Attempting to change file name while recording!");
+        }
+
+    }
+
+    /**
      * Returns the duration of the audio file
      * @return The duration of the audio file, in milliseconds, or -1 if the operation failed
      */
@@ -203,6 +208,24 @@ public class Audroid extends Service {
             return -1;
         }
 
+    }
+
+    /**
+     * Returns the name of the file, without the preceding path or extension
+     * @return the name of the mp3 file
+     */
+    public String getName() {
+
+        return new File(privateFilePath).getName();
+
+    }
+
+    /**
+     * Returns the date time that this recording started
+     * @return The date and time that this recording started
+     */
+    public Date getTimestamp() {
+        return this.dateCreated;
     }
 
 }
