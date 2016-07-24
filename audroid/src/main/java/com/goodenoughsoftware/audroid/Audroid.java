@@ -1,28 +1,35 @@
 package com.goodenoughsoftware.audroid;
 
 import android.Manifest;
+import android.app.Service;
+import android.content.Intent;
+import android.media.MediaRecorder;
+import android.os.Environment;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
- * A class that provides methods for recording and playing audio on Android. Note that the user
+ * A service that provides methods for recording and playing audio on Android. Note that the user
  * of this class is responsible for remembering where audio files were saved
  * Last modified July 21, 2016
  * @author Aaron Vontell
  * @version 0.1.1
  */
-public class Audroid {
+public class Audroid extends Service {
 
     private File audioFile;
     private AudroidSource sourceDevice;
     private boolean recording = false;
+    private MediaRecorder audioRecorder;
 
     /**
      * Creates an object that will handle the recording and playback of audio to and from a given
      * file. Recording will be done through the given source.
-     * *Note: this file requires permissions for reading storage, writing to storage, and
+     * * Note: this file requires permissions for reading storage, writing to storage, and
      * recording audio.
      * @param audioLocation The path / location that you wish to save and play the recording from
      * @param source The device that will listen to audio for recording
@@ -38,15 +45,36 @@ public class Audroid {
 
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * Starts the audio recording (asynchronously as a background service), saving the information
      * to the file given at Audroid creation.
      * *Note: this will overwrite any content at the given audioLocation
+     * TODO: Should this handle IOException, or throw them?
      */
     public void startRecording() {
 
-        recording = true;
-        throw new RuntimeException("Not yet implemented!");
+        try {
+            audioRecorder = new MediaRecorder();
+            audioRecorder.setAudioSource(sourceDevice.getAndroidSource());
+            audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            audioRecorder.setOutputFile(Environment.getExternalStorageDirectory()
+                    .getAbsolutePath() + "/myrecording.mp3");
+            audioRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            audioRecorder.prepare();
+            audioRecorder.start();
+
+            recording = true;
+        } catch (IOException e) {
+            throw new RuntimeException("Start recording failed: " + e.getMessage());
+        }
+
+
     }
 
     /**
@@ -54,17 +82,18 @@ public class Audroid {
      */
     public void pauseRecording() {
 
+        // TODO: This needs to use mp4 appending with stop and start
         recording = false;
-        throw new RuntimeException("Not yet implemented!");
+        audioRecorder.pause();
     }
 
     /**
-     * Continue the recording
+     * Resume the recording
      */
-    public void unpauseRecording() {
+    public void resumeRecording() {
 
         recording = true;
-        throw new RuntimeException("Not yet implemented!");
+        audioRecorder.resume();
     }
 
     /**
@@ -78,7 +107,7 @@ public class Audroid {
 
     /**
      * Changes the location to save the file to newLocation
-     * *Note: This method cannot be called once startRecording() has been called and before
+     * * Note: This method cannot be called once startRecording() has been called and before
      * stopRecording() has been called, and will throw a RuntimeException if attempted
      * @param newLocation The new location of the audio file
      */
@@ -133,6 +162,14 @@ public class Audroid {
      */
     public File getSavedFile() {
         throw new RuntimeException("Not yet implemented!");
+    }
+
+    /**
+     * Returns the duration of the audio file
+     * @return The duration of the audio file, in milliseconds
+     */
+    public int getDuration() {
+        throw new RuntimeException("Not yet implemented");
     }
 
     /**
