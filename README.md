@@ -19,7 +19,7 @@ allprojects {
 2.Add the dependency
 ```groovy
 dependencies {
-        compile 'com.github.GoodEnoughSoftware:audroid:v0.1-alpha'
+        compile 'com.github.GoodEnoughSoftware:audroid:v0.2-alpha'
 }
 ```
 
