@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/AudroidExample.iml" filepath="$PROJECT_DIR$/AudroidExample.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/audroid/audroid.iml" filepath="$PROJECT_DIR$/audroid/audroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/audroid.iml" filepath="$PROJECT_DIR$/audroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/audroid/audroid-audroid.iml" filepath="$PROJECT_DIR$/audroid/audroid-audroid.iml" />
     </modules>
   </component>
 </project>
