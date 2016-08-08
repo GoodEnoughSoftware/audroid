@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.goodenoughsoftware.audroid.Audroid;
+import com.goodenoughsoftware.audroid.AudroidService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recorder = new Intent(this, Audroid.class);
+        recorder = new Intent(this, AudroidService.class);
         startService(recorder);
 
     }
@@ -52,28 +52,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void startRecording() {
 
-        recorder.setAction(Audroid.START_RECORDING);
+        recorder.setAction(AudroidService.START_RECORDING);
         startService(recorder);
 
     }
 
     private void pauseRecording() {
 
-        recorder.setAction(Audroid.PAUSE_RECORDING);
+        recorder.setAction(AudroidService.PAUSE_RECORDING);
         startService(recorder);
 
     }
 
     private void stopRecording() {
 
-        recorder.setAction(Audroid.STOP_RECORDING);
+        recorder.setAction(AudroidService.STOP_RECORDING);
         startService(recorder);
 
     }
 
     private void playRecording() {
 
-        recorder.setAction(Audroid.START_PLAYING);
+        recorder.setAction(AudroidService.START_PLAYING);
         startService(recorder);
 
     }
