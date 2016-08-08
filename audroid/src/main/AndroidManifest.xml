@@ -7,7 +7,6 @@
 
         <service android:name=".Audroid" />
 
-
     </application>
 
 </manifest>

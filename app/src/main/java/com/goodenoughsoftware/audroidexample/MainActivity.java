@@ -1,22 +1,16 @@
 package com.goodenoughsoftware.audroidexample;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.goodenoughsoftware.audroid.Audroid;
-import com.goodenoughsoftware.audroid.AudroidSource;
-
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Audroid recorder;
-    private File recording;
+    private Intent recorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,37 +40,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recording = new File(getFilesDir().getAbsolutePath() + "/recording.mp3");
+        recorder = new Intent(this, Audroid.class);
+        startService(recorder);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        recorder = new Audroid(AudroidSource.MICROPHONE, recording);
     }
 
     private void startRecording() {
 
-        recorder.startRecording();
+        recorder.setAction(Audroid.START_RECORDING);
+        startService(recorder);
 
     }
 
     private void pauseRecording() {
 
-        recorder.pauseRecording();
+        recorder.setAction(Audroid.PAUSE_RECORDING);
+        startService(recorder);
 
     }
 
     private void stopRecording() {
 
-        recorder.stopRecording();
+        recorder.setAction(Audroid.STOP_RECORDING);
+        startService(recorder);
 
     }
 
     private void playRecording() {
 
-        recorder.playRecording();
+        recorder.setAction(Audroid.START_PLAYING);
+        startService(recorder);
 
     }
 }

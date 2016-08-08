@@ -20,7 +20,7 @@ import java.util.Random;
  * of this class is responsible for remembering where audio files were saved
  * Last modified July 21, 2016
  * @author Aaron Vontell
- * @version 0.1.1
+ * @version 0.3.1
  */
 public class Audroid extends Service {
 
@@ -33,53 +33,22 @@ public class Audroid extends Service {
     private String privateFilePath;
     private Date dateCreated;
 
-    public final String START_RECORDING = "com.goodenoughsoftware.audroid.START_RECORDING";
-    public final String PAUSE_RECORDING = "com.goodenoughsoftware.audroid.PAUSE_RECORDING";
-    public final String RESUME_RECORDING = "com.goodenoughsoftware.audroid.RESUME_RECORDING";
-    public final String STOP_RECORDING = "com.goodenoughsoftware.audroid.STOP_RECORDING";
-    public final String START_PLAYING = "com.goodenoughsoftware.audroid.START_PLAYING";
-    public final String PAUSE_PLAYING = "com.goodenoughsoftware.audroid.PAUSE_PLAYING";
-    public final String RESUME_PLAYING = "com.goodenoughsoftware.audroid.RESUME_PLAYING";
-    public final String STOP_PLAYING = "com.goodenoughsoftware.audroid.STOP_PLAYING";
+    public final static String START_RECORDING = "com.goodenoughsoftware.audroid.START_RECORDING";
+    public final static String PAUSE_RECORDING = "com.goodenoughsoftware.audroid.PAUSE_RECORDING";
+    public final static String RESUME_RECORDING = "com.goodenoughsoftware.audroid.RESUME_RECORDING";
+    public final static String STOP_RECORDING = "com.goodenoughsoftware.audroid.STOP_RECORDING";
+    public final static String START_PLAYING = "com.goodenoughsoftware.audroid.START_PLAYING";
+    public final static String PAUSE_PLAYING = "com.goodenoughsoftware.audroid.PAUSE_PLAYING";
+    public final static String RESUME_PLAYING = "com.goodenoughsoftware.audroid.RESUME_PLAYING";
+    public final static String STOP_PLAYING = "com.goodenoughsoftware.audroid.STOP_PLAYING";
 
     /**
-     * Creates an object that will handle the recording and playback of audio to and from a given
-     * file. Recording will be done through the given source.
-     * * Note: this file requires the recording audio permission.
-     * @param source The device that will listen to audio for recording
+     * This is a default constructor that should not be used directly
      */
+    public Audroid() { }
+
     @RequiresPermission(allOf = {
             Manifest.permission.RECORD_AUDIO})
-    public Audroid(@NonNull AudroidSource source) {
-
-        this.sourceDevice = source;
-        this.dateCreated = new Date();
-
-        while(this.privateFilePath == null || fileExists()) {
-            this.randomInt = new Random().nextInt();
-            this.privateFilePath = getFilesDir().getAbsolutePath() + "/" + randomInt + ".mp3";
-        }
-
-    }
-
-    /**
-     * Creates an Audroid object from an existing file that contains MP3 content, with any new
-     * recording being done through the given source.
-     * * Note: this file requires the recording audio permission.
-     * @param source THe device that will listen to audio for recording
-     * @param existingFile The existing file that contains mp3 content
-     */
-    @RequiresPermission(allOf = {
-            Manifest.permission.RECORD_AUDIO})
-    public Audroid(@NonNull AudroidSource source, File existingFile) {
-
-        this.sourceDevice = source;
-
-        this.randomInt = -1;
-        this.privateFilePath = existingFile.getAbsolutePath();
-
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -87,32 +56,47 @@ public class Audroid extends Service {
         // pausing the recording, resuming the recording,
         String action = intent.getAction();
         // TODO: Better error checks here
-        switch(action) {
-            case START_RECORDING:
-                if(!recording) {startRecording();}
-                break;
-            case PAUSE_RECORDING:
-                if(recording) {pauseRecording();}
-                break;
-            case RESUME_RECORDING:
-                if(!recording) {resumeRecording();}
-                break;
-            case STOP_RECORDING:
-                stopRecording();
-                break;
-            case START_PLAYING:
-                if(!playing) {playRecording();}
-                break;
-            case PAUSE_PLAYING:
-                if(playing) {pausePlayingRecording();}
-                break;
-            case RESUME_PLAYING:
-                if(!playing) {resumePlayingRecording();}
-                break;
-            case STOP_PLAYING:
-                stopPlayingRecording();
-                break;
 
+        // If creating for the first time, instantiate
+        if(action == null) {
+
+            this.sourceDevice = AudroidSource.MICROPHONE;
+            this.dateCreated = new Date();
+
+            // TODO: Add support for existing file path
+            while(this.privateFilePath == null || fileExists()) {
+                this.randomInt = new Random().nextInt();
+                this.privateFilePath = getBaseContext().getFilesDir().getAbsolutePath()
+                                       + "/" + randomInt + ".mp3";
+            }
+
+        } else {
+            switch(action) {
+                case START_RECORDING:
+                    if(!recording) {startRecording();}
+                    break;
+                case PAUSE_RECORDING:
+                    if(recording) {pauseRecording();}
+                    break;
+                case RESUME_RECORDING:
+                    if(!recording) {resumeRecording();}
+                    break;
+                case STOP_RECORDING:
+                    stopRecording();
+                    break;
+                case START_PLAYING:
+                    if(!playing) {playRecording();}
+                    break;
+                case PAUSE_PLAYING:
+                    if(playing) {pausePlayingRecording();}
+                    break;
+                case RESUME_PLAYING:
+                    if(!playing) {resumePlayingRecording();}
+                    break;
+                case STOP_PLAYING:
+                    stopPlayingRecording();
+                    break;
+            }
         }
 
         return START_NOT_STICKY;
