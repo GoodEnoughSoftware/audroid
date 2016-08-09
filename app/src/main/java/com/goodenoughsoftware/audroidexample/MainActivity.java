@@ -1,16 +1,15 @@
 package com.goodenoughsoftware.audroidexample;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.goodenoughsoftware.audroid.AudroidService;
+import com.goodenoughsoftware.audroid.Audroid;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Intent recorder;
+    private Audroid audroid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,24 +23,23 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startRecording();
+                audroid.startRecording();
             }
         });
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopRecording();
+                audroid.stopRecording();
             }
         });
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playRecording();
+                audroid.startPlayback();
             }
         });
 
-        recorder = new Intent(this, AudroidService.class);
-        startService(recorder);
+        audroid = new Audroid(this);
 
     }
 
@@ -50,31 +48,4 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void startRecording() {
-
-        recorder.setAction(AudroidService.START_RECORDING);
-        startService(recorder);
-
-    }
-
-    private void pauseRecording() {
-
-        recorder.setAction(AudroidService.PAUSE_RECORDING);
-        startService(recorder);
-
-    }
-
-    private void stopRecording() {
-
-        recorder.setAction(AudroidService.STOP_RECORDING);
-        startService(recorder);
-
-    }
-
-    private void playRecording() {
-
-        recorder.setAction(AudroidService.START_PLAYING);
-        startService(recorder);
-
-    }
 }
